@@ -18,7 +18,14 @@ COMMIT_MESSAGES = [
 
 def make_daily_commits(min_commits: int = 1, max_commits: int = 3):
     now = datetime.datetime.now()
-    num_commits = random.randint(min_commits, max_commits)
+    
+    # 20% kemungkinan menjadi "Peak Day" (hari produktif tinggi dengan hijau lebih terang 5-8 commit)
+    is_peak_day = random.random() < 0.20
+    if is_peak_day:
+        num_commits = random.randint(5, 8)
+        print(f"[*] [PEAK DAY] Hari ini diset sebagai hari aktivitas tinggi ({num_commits} commits)")
+    else:
+        num_commits = random.randint(min_commits, max_commits)
     
     print(f"[*] Menjalankan {num_commits} commit untuk hari ini: {now.strftime('%Y-%m-%d %H:%M:%S')}")
     
