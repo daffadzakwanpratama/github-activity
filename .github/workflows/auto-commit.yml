@@ -1,0 +1,37 @@
+name: Daily Auto Contribution
+
+on:
+  schedule:
+    # Berjalan setiap hari pada jam 03:00 UTC (10:00 WIB)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Memungkinkan tombol "Run workflow" manual di tab Actions GitHub
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configure Git User
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Run Daily Commit Script
+        run: |
+          python daily.py
+
+      - name: Push Commits to GitHub
+        run: |
+          git push origin main || git push origin master
