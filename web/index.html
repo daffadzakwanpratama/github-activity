@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Activity & Schedule Controller</title>
+  <meta name="description" content="Dashboard pengaturan jadwal libur, peluang acak, dan generator kontribusi GitHub otomatis.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header-container">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 16 16">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>GitHub Activity Manager</h1>
+        <p>Atur jadwal libur, probabilitas, dan grafik kontribusi dengan mudah</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-save-top" class="btn btn-primary">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1z"/></svg>
+        Simpan Pengaturan
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-container">
+
+    <!-- LEFT COLUMN: SETTINGS -->
+    <div class="settings-column">
+
+      <!-- 1. JADWAL HARI LIBUR TETAP -->
+      <section class="card">
+        <h2 class="card-title">
+          <span class="icon">📅</span>
+          Jadwal Hari Libur Terjadwal
+        </h2>
+        <p class="label-hint">Klik pada hari untuk mengaktifkan atau menonaktifkan libur otomatis (Merah = Libur, Hijau = Aktif).</p>
+        
+        <div class="days-grid" id="days-selector">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- 2. PROBABILITAS & PERILAKU ALAMI -->
+      <section class="card">
+        <h2 class="card-title">
+          <span class="icon">🎲</span>
+          Probabilitas & Perilaku Alami (Natural AI)
+        </h2>
+
+        <!-- Slider Libur Acak -->
+        <div class="form-group">
+          <div class="label-row">
+            <div>
+              <span class="label-text">Peluang Libur Acak (Random Skip)</span>
+              <p class="label-hint">Peluang istirahat santai di luar hari libur tetap agar grafik terlihat manusiawi.</p>
+            </div>
+            <span class="badge-val" id="val-random-skip">15%</span>
+          </div>
+          <input type="range" id="input-random-skip" min="0" max="100" step="1" value="15">
+        </div>
+
+        <!-- Slider Peak Day -->
+        <div class="form-group">
+          <div class="label-row">
+            <div>
+              <span class="label-text">Peluang Peak Day (Hari Super Sibuk)</span>
+              <p class="label-hint">Hari produktif tinggi dengan jumlah commit lebih padat (5 - 8 commit/hari).</p>
+            </div>
+            <span class="badge-val" id="val-peak-day">20%</span>
+          </div>
+          <input type="range" id="input-peak-day" min="0" max="100" step="1" value="20">
+        </div>
+      </section>
+
+      <!-- 3. JUMLAH COMMIT & JAM KERJA -->
+      <section class="card">
+        <h2 class="card-title">
+          <span class="icon">⚡</span>
+          Rentang Commit & Jam Aktif
+        </h2>
+
+        <div class="input-row form-group">
+          <div>
+            <label class="label-text" for="input-min-commit">Min Commit / Hari</label>
+            <input type="number" id="input-min-commit" min="1" max="50" value="1">
+          </div>
+          <div>
+            <label class="label-text" for="input-max-commit">Max Commit / Hari</label>
+            <input type="number" id="input-max-commit" min="1" max="50" value="3">
+          </div>
+        </div>
+
+        <div class="input-row form-group">
+          <div>
+            <label class="label-text" for="input-hour-start">Jam Mulai Aktif (0-23)</label>
+            <input type="number" id="input-hour-start" min="0" max="23" value="9">
+          </div>
+          <div>
+            <label class="label-text" for="input-hour-end">Jam Selesai Aktif (0-23)</label>
+            <input type="number" id="input-hour-end" min="0" max="23" value="22">
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. TEMPLATE PESAN COMMIT -->
+      <section class="card">
+        <h2 class="card-title">
+          <span class="icon">💬</span>
+          Daftar Pesan Commit Acak
+        </h2>
+        <div class="tag-list" id="commit-messages-list">
+          <!-- Populated dynamically via JS -->
+        </div>
+        <div class="add-msg-row">
+          <input type="text" id="input-new-msg" placeholder="Contoh: chore: sync automated routine">
+          <button id="btn-add-msg" class="btn btn-secondary">+ Tambah</button>
+        </div>
+      </section>
+
+      <!-- 5. SIMULATOR GRAFIK KONTRIBUSI (HEATMAP) -->
+      <section class="card">
+        <div class="label-row" style="margin-bottom: 12px;">
+          <h2 class="card-title" style="margin-bottom: 0;">
+            <span class="icon">🟩</span>
+            Live Heatmap Simulator (30 Minggu)
+          </h2>
+          <button id="btn-refresh-sim" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">
+            🔄 Acak Ulang Preview
+          </button>
+        </div>
+        <p class="label-hint" style="margin-bottom: 14px;">Simulasi bagaimana grafik GitHub Anda terlihat dengan pengaturan saat ini.</p>
+        <div class="heatmap-container">
+          <div class="heatmap-grid" id="heatmap-grid">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+        <div class="heatmap-legend">
+          <span>Sedikit</span>
+          <div class="legend-item level-0"></div>
+          <div class="legend-item level-1"></div>
+          <div class="legend-item level-2"></div>
+          <div class="legend-item level-3"></div>
+          <div class="legend-item level-4"></div>
+          <span>Banyak</span>
+          <span style="margin-left: 10px;">| </span>
+          <div class="legend-item off-day" style="margin-left: 4px;"></div>
+          <span>Libur</span>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT COLUMN: ACTIONS & LOGS -->
+    <div class="actions-column">
+
+      <!-- QUICK STATS -->
+      <div class="card">
+        <h2 class="card-title">
+          <span class="icon">📊</span>
+          Status Hari Ini
+        </h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-val" id="stat-today-day">Jumat</div>
+            <div class="stat-label">Hari Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="stat-today-status">Libur</div>
+            <div class="stat-label">Status Jadwal</div>
+          </div>
+        </div>
+        <button id="btn-run-today" class="btn btn-primary btn-block" style="margin-bottom: 8px;">
+          ⚡ Test Commit Hari Ini
+        </button>
+        <button id="btn-force-today" class="btn btn-secondary btn-block" style="font-size: 0.8rem;">
+          Paksa Commit (Bypass Libur)
+        </button>
+      </div>
+
+      <!-- BACKFILL GENERATOR -->
+      <div class="card">
+        <h2 class="card-title">
+          <span class="icon">⏪</span>
+          Backfill Masa Lalu
+        </h2>
+        <p class="label-hint" style="margin-bottom: 14px;">Hijaukan tanggal masa lalu berdasarkan pengaturan jadwal & libur saat ini.</p>
+
+        <div class="form-group">
+          <label class="label-text" for="backfill-start">Tanggal Mulai</label>
+          <input type="date" id="backfill-start">
+        </div>
+        <div class="form-group">
+          <label class="label-text" for="backfill-end">Tanggal Akhir</label>
+          <input type="date" id="backfill-end">
+        </div>
+
+        <button id="btn-run-backfill" class="btn btn-secondary btn-block" style="margin-top: 10px;">
+          🚀 Jalankan Backfill
+        </button>
+      </div>
+
+      <!-- GIT ACTIONS & TERMINAL -->
+      <div class="card">
+        <div class="label-row" style="margin-bottom: 10px;">
+          <h2 class="card-title" style="margin-bottom: 0;">
+            <span class="icon">💻</span>
+            Live Console
+          </h2>
+          <button id="btn-git-push" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;">
+            ☁️ Git Push
+          </button>
+        </div>
+        <div class="console-box" id="console-box">
+[*] Dashboard siap digunakan.
+[*] Silakan sesuaikan pengaturan jadwal hari libur Anda.
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- TOAST ALERT -->
+  <div id="toast">
+    <span id="toast-icon">✅</span>
+    <span id="toast-msg">Pengaturan berhasil disimpan!</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

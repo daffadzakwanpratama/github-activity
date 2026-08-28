@@ -1,0 +1,21 @@
+{
+  "scheduled_off_days": [4, 5],
+  "random_skip_chance": 0.15,
+  "peak_day_chance": 0.20,
+  "min_commits": 1,
+  "max_commits": 3,
+  "working_hours": {
+    "start": 9,
+    "end": 22
+  },
+  "commit_messages": [
+    "chore: update daily activity log",
+    "docs: sync routine progress",
+    "feat: record metric logs",
+    "refactor: optimize data points",
+    "chore: routine healthcheck and log update",
+    "docs: update maintenance timestamp",
+    "feat: add daily workspace telemetry",
+    "perf: sync local cache index"
+  ]
+}

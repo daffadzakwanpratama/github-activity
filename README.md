@@ -1,15 +1,36 @@
-# 🌿 GitHub Contribution Auto-Bot & Backfill System
+# 🌿 GitHub Contribution Auto-Bot & Web Dashboard
 
-Sistem otomatisasi dan generator kontribusi GitHub untuk memperbanyak kotak hijau di profil GitHub kamu (1–3 kontribusi per hari atau backfill riwayat masa lalu).
+Sistem otomatisasi dan generator kontribusi GitHub modern dengan **Web Dashboard visual** untuk mengatur jadwal libur (seperti Jumat & Sabtu), peluang libur acak, frekuensi commit harian, serta backfill riwayat masa lalu.
+
+---
+
+## 🎛️ Cara Membuka Web Dashboard Pengaturan
+
+Kamu bisa mengatur seluruh jadwal dan melakukan commit secara visual lewat browser:
+
+1. Klik ganda (double-click) file **[`buka_dashboard.bat`](buka_dashboard.bat)**  
+   *atau buka terminal dan jalankan `python app.py`*.
+2. Browser akan terbuka otomatis di **`http://localhost:5000`**.
+3. Di Dashboard kamu bisa:
+   - **Memilih Hari Libur Terjadwal**: Klik tombol hari (misal Jumat & Sabtu libur).
+   - **Mengatur Peluang Libur Acak**: Slider 0%–100% agar kontribusi terlihat sangat alami layaknya manusia.
+   - **Peluang Peak Day**: Mengatur frekuensi hari super produktif (5–8 commits).
+   - **Simulasi Grafik Hijau (Live Heatmap)**: Melihat simulasi visual kontribusi GitHub secara realtime.
+   - **Test Commit & Backfill**: Menjalankan commit hari ini atau backfill tanggal masa lalu langsung dari browser.
+   - **Simpan Pengaturan**: Langsung tersimpan ke `config.json` dan otomatis dipakai oleh GitHub Actions.
 
 ---
 
 ## 📁 Struktur File
 
-- **`backfill.py`**: Script untuk mengisi kotak hijau pada tanggal-tanggal masa lalu (bisa 1 tahun terakhir, 6 bulan, atau custom tanggal).
-- **`daily.py`**: Script yang membuat 1–3 commit acak untuk hari ini.
-- **`.github/workflows/auto-commit.yml`**: GitHub Action otomatis yang berjalan di cloud setiap hari (tidak perlu laptop menyala).
-- **`activity.txt`**: File catatan yang akan diupdate secara otomatis setiap commit.
+- **`buka_dashboard.bat`**: Shortcut Windows sekali klik untuk membuka Web Dashboard.
+- **`app.py`**: Server backend dashboard lokal (zero-dependency, tanpa perlu `pip install`).
+- **`web/`**: Tampilan visual antarmuka dashboard (HTML, CSS, JS modern & responsif).
+- **`config.json`**: File pengaturan terpusat (hari libur, probabilitas, rentang commit).
+- **`daily.py`**: Script yang membuat commit harian berdasarkan `config.json`.
+- **`backfill.py`**: Script generator riwayat commit masa lalu.
+- **`.github/workflows/auto-commit.yml`**: GitHub Action otomatis yang berjalan setiap hari di cloud.
+- **`activity.txt`**: File log rekaman kontribusi.
 
 ---
 
@@ -19,7 +40,7 @@ Sistem otomatisasi dan generator kontribusi GitHub untuk memperbanyak kotak hija
 1. Buka [github.com/new](https://github.com/new).
 2. Beri nama repository (misal: `github-activity-tracker` atau `webgithub`).
 3. Set sebagai **Public** *(atau Private, tapi pastikan opsi "Include private contributions" di profil GitHub kamu sudah dicentang)*.
-4. **Jangan centang** "Add a README file" (karena kita sudah punya filenya).
+4. **Jangan centang** "Add a README file".
 5. Klik **Create repository**.
 
 ---
@@ -30,7 +51,7 @@ Buka terminal / PowerShell di folder ini (`c:\Users\daffa\Desktop\webgithub`), l
 ```bash
 git init
 git add .
-git commit -m "feat: initial commit"
+git commit -m "feat: initial commit with web dashboard"
 git branch -M main
 git remote add origin https://github.com/USERNAME_KAMU/NAMA_REPO_KAMU.git
 git push -u origin main
@@ -40,18 +61,7 @@ git push -u origin main
 ---
 
 ### Langkah 3: Mengisi Hari Masa Lalu (Backfill History - Opsional)
-Jika kamu ingin langsung menghijaukan hari-hari yang kosong di masa lalu:
-
-1. Jalankan script backfill di terminal:
-   ```bash
-   python backfill.py
-   ```
-2. Pilih opsi rentang waktu (misal pilih `1` untuk 365 hari terakhir).
-3. Setelah proses selesai, push commit-commit tersebut ke GitHub:
-   ```bash
-   git push origin main
-   ```
-*Tunggu 1-2 menit, lalu refresh profil GitHub kamu. Kotak hijau masa lalu akan langsung terisi!*
+Buka Dashboard (`buka_dashboard.bat`), pilih rentang tanggal pada panel **Backfill Masa Lalu**, lalu klik **Jalankan Backfill**. Setelah selesai, klik tombol **Git Push** di dashboard.
 
 ---
 
@@ -64,18 +74,3 @@ Agar GitHub Action bisa melakukan push otomatis setiap hari tanpa error permissi
 4. Pilih **Read and write permissions**.
 5. Centang **Allow GitHub Actions to create and approve pull requests**.
 6. Klik **Save**.
-
----
-
-### Langkah 5: Tes Jalankan GitHub Action
-1. Masuk ke tab **Actions** di repo GitHub kamu.
-2. Klik workflow **Daily Auto Contribution** di sebelah kiri.
-3. Klik tombol **Run workflow** -> **Run workflow**.
-4. Setelah workflow berhasil berstatus hijau (centang), cek profil kamu!
-
----
-
-## ⚙️ Pengaturan Tambahan (Opsional)
-
-- **Mengubah Jam Jadwal**: Buka [`.github/workflows/auto-commit.yml`](.github/workflows/auto-commit.yml) dan sesuaikan baris `cron: '0 3 * * *'` (Waktu menggunakan format UTC, WIB = UTC + 7).
-- **Mengubah Jumlah Commit**: Buka [`daily.py`](daily.py) dan ubah parameter `make_daily_commits(1, 3)` sesuai keinginan.
