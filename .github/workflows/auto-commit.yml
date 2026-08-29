@@ -1,10 +1,12 @@
 name: Daily Auto Contribution
 
+# Jadwal otomatis dinonaktifkan sementara (PAUSED)
+# Jika ingin mengaktifkan kembali, hapus tanda '#' pada baris schedule dan cron di bawah:
+# on:
+#   schedule:
+#     - cron: '0 3 * * *'
 on:
-  schedule:
-    # Berjalan setiap hari pada jam 03:00 UTC (10:00 WIB)
-    - cron: '0 3 * * *'
-  workflow_dispatch: # Memungkinkan tombol "Run workflow" manual di tab Actions GitHub
+  workflow_dispatch: # Hanya bisa dijalankan manual jika diinginkan
 
 jobs:
   auto-commit:
